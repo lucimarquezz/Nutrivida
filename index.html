@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NutriVida | Recetas Protegidas</title>
+    <title>NutriVida | IA & Recetas</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🥑</text></svg>">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;700&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
 
@@ -46,6 +46,8 @@
         .recipe-content { padding: 1.5rem; cursor: pointer; }
         .recipe-title { font-family: 'Playfair Display', serif; font-size: 1.2rem; margin-bottom: 0.5rem; }
         
+        .calorie-badge { background: #f3fdf3; color: #2d5a2d; padding: 2px 8px; border-radius: 10px; font-size: 0.75rem; font-weight: bold; border: 1px solid #c8e6c9; display: inline-block; margin-top: 5px; }
+
         .fav-btn { position: absolute; top: 10px; right: 10px; background: rgba(255,255,255,0.9); border: none; border-radius: 50%; width: 35px; height: 35px; cursor: pointer; font-size: 1.2rem; z-index: 10; }
         .delete-btn { position: absolute; top: 10px; left: 10px; background: #E07A5F; color: white; border: none; border-radius: 50%; width: 30px; height: 30px; cursor: pointer; z-index: 10; display: none; }
 
@@ -109,9 +111,9 @@
                 <div style="flex:1"><label>Tiempo</label><input type="text" id="f_time" placeholder="Ej: 15 min"></div>
                 <div style="flex:1"><label>Personas</label><input type="number" id="f_servings"></div>
             </div>
-            <div class="form-group"><label>Ingredientes (por comas)</label><textarea id="f_ingredients" rows="3"></textarea></div>
+            <div class="form-group"><label>Ingredientes (por comas)</label><textarea id="f_ingredients" rows="3" placeholder="Pollo, arroz, aguacate..."></textarea></div>
             <div class="form-group"><label>Pasos</label><textarea id="f_steps" rows="4"></textarea></div>
-            <button type="submit" class="save-btn">Publicar en la Nube 🚀</button>
+            <button type="submit" class="save-btn">Calcular & Guardar 🚀</button>
         </form>
     </div></div>
 
@@ -124,7 +126,6 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 
     <script>
-        // CONFIGURACIÓN DE FIREBASE
         const firebaseConfig = {
             apiKey: "AIzaSyBPJzHSkThHiVzhDO0JVBR9mzeDzsdMp3U",
             authDomain: "nutrivida-a76c6.firebaseapp.com",
@@ -141,10 +142,36 @@
         let recipes = [];
         let isEditMode = false;
         let currentCategory = 'all';
-        const ACCESS_CODE = "210923"; // TU CÓDIGO DE ACCESO
+        const ACCESS_CODE = "210923";
 
-        const grid = document.getElementById('recipeGrid');
-        const searchInput = document.getElementById('searchInput');
+        // --- LÓGICA DE IA NUTRICIONAL (Diccionario de Densidad) ---
+        const calorieMap = {
+            "pollo": 165, "carne": 250, "pescado": 200, "arroz": 130, "pan": 260,
+            "aguacate": 160, "huevo": 155, "aceite": 880, "avena": 380, "leche": 42,
+            "platano": 89, "manzana": 52, "pasta": 131, "quinoa": 120, "lentejas": 116,
+            "queso": 400, "mantequilla": 717, "azucar": 387, "yogur": 59, "nueces": 650
+        };
+
+        function estimateCalories(ingredientsText, servings) {
+            const ings = ingredientsText.toLowerCase().split(',');
+            let total = 0;
+            let countFound = 0;
+
+            ings.forEach(ing => {
+                for (let key in calorieMap) {
+                    if (ing.includes(key)) {
+                        total += calorieMap[key]; // Suma base por ingrediente detectado
+                        countFound++;
+                    }
+                }
+            });
+
+            // Si no detecta nada, asigna un promedio base saludable
+            if (total === 0) total = 300; 
+            
+            // Ajuste por porción (El diccionario es base 100g aprox, ajustamos por plato)
+            return Math.round((total / (servings || 1)) + 150); 
+        }
 
         function listenRecipes() {
             db.collection("recetas").orderBy("createdAt", "desc").onSnapshot((snapshot) => {
@@ -173,24 +200,22 @@
                     <div class="recipe-content" onclick="viewRecipe('${r.id}')">
                         <div class="recipe-title">${r.title}</div>
                         <div style="font-size:0.8rem; color:#888">⏱️ ${r.time || '--'} | 👤 ${r.servings || '--'}</div>
+                        <div class="calorie-badge">🔥 ~${r.calories || '??'} kcal</div>
                     </div>
                 `;
                 grid.appendChild(card);
             });
         }
 
-        // --- Lógica del Switch con Código ---
+        // Switch de seguridad
         document.getElementById('modeSwitch').addEventListener('change', function(e) {
             if (this.checked) {
-                const inputCode = prompt("🔐 Introduce el código de administrador para editar:");
-                if (inputCode === ACCESS_CODE) {
+                if (prompt("🔐 Código de administrador:") === ACCESS_CODE) {
                     isEditMode = true;
                     document.getElementById('addBtn').style.display = 'flex';
                 } else {
-                    alert("⚠️ Código incorrecto. Acceso denegado.");
+                    alert("Acceso denegado");
                     this.checked = false;
-                    isEditMode = false;
-                    document.getElementById('addBtn').style.display = 'none';
                 }
             } else {
                 isEditMode = false;
@@ -201,14 +226,21 @@
 
         document.getElementById('recipeForm').addEventListener('submit', async (e) => {
             e.preventDefault();
+            const ings = document.getElementById('f_ingredients').value;
+            const servs = document.getElementById('f_servings').value;
+            
+            // LLAMADA A LA FUNCIÓN DE ESTIMACIÓN
+            const calResult = estimateCalories(ings, servs);
+
             const data = {
                 title: document.getElementById('f_title').value,
                 category: document.getElementById('f_category').value,
                 image: document.getElementById('f_image').value,
                 time: document.getElementById('f_time').value,
-                servings: document.getElementById('f_servings').value,
-                ingredients: document.getElementById('f_ingredients').value,
+                servings: servs,
+                ingredients: ings,
                 steps: document.getElementById('f_steps').value,
+                calories: calResult, // GUARDADO EN FIREBASE
                 favorite: false,
                 createdAt: new Date()
             };
@@ -222,9 +254,7 @@
         };
 
         window.deleteRecipe = async (id) => {
-            if(confirm('¿Eliminar de la nube permanentemente?')) {
-                await db.collection("recetas").doc(id).delete();
-            }
+            if(confirm('¿Eliminar receta?')) await db.collection("recetas").doc(id).delete();
         };
 
         window.openForm = () => document.getElementById('formModal').style.display = 'block';
@@ -237,10 +267,11 @@
             content.innerHTML = `
                 <img src="${r.image}" class="detail-img">
                 <h2 style="font-family:'Playfair Display'">${r.title}</h2>
+                <div style="margin-bottom:15px"><span class="calorie-badge" style="font-size:1rem">🔥 Estimación: ${r.calories} kcal por ración</span></div>
                 <div class="detail-section">
                     <h3>🛒 Ingredientes</h3>
                     <p>${r.ingredients.replace(/,/g, ' • ')}</p>
-                    <h3>👨‍🍳 Paso a Paso</h3>
+                    <h3>👨‍🍳 Preparación</h3>
                     <p style="white-space: pre-line;">${r.steps}</p>
                 </div>
             `;
@@ -256,6 +287,7 @@
             }
         });
 
+        const searchInput = document.getElementById('searchInput');
         searchInput.addEventListener('input', renderRecipes);
         window.onclick = (e) => { if(e.target.className === 'modal') { closeForm(); closeDetail(); } };
 
