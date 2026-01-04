@@ -51,7 +51,6 @@
 
         .mode-toggle { display: flex; align-items: center; gap: 10px; font-size: 0.9rem; font-weight: bold; }
         
-        /* Switch */
         .switch { position: relative; width: 40px; height: 20px; }
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #ccc; border-radius: 34px; }
@@ -59,16 +58,13 @@
         input:checked + .slider { background: var(--primary); }
         input:checked + .slider:before { transform: translateX(20px); }
 
-        /* Categorías */
         .categories { display: flex; justify-content: center; gap: 15px; padding: 2rem; overflow-x: auto; }
         .cat-btn { 
             background: white; border: none; padding: 10px 20px; border-radius: 20px; 
             cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.05); font-weight: 600;
         }
         .cat-btn.active { background: var(--primary); color: white; }
-        .cat-btn:hover { transform: scale(1.05); }
 
-        /* Grid Animado */
         .recipe-grid { 
             display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); 
             gap: 2rem; max-width: 1200px; margin: 0 auto; padding: 1rem; 
@@ -84,7 +80,6 @@
         .recipe-content { padding: 1.5rem; cursor: pointer; }
         .recipe-title { font-family: 'Playfair Display', serif; font-size: 1.3rem; margin-bottom: 8px; }
 
-        /* Badge Calorías */
         .cal-badge { 
             background: #f1f8e9; color: #558b2f; padding: 4px 10px; 
             border-radius: 10px; font-size: 0.8rem; font-weight: bold; 
@@ -93,31 +88,42 @@
         .fav-btn { 
             position: absolute; top: 15px; right: 15px; background: rgba(255,255,255,0.9); 
             border: none; border-radius: 50%; width: 35px; height: 35px; cursor: pointer; font-size: 1.2rem;
+            display: flex; align-items: center; justify-content: center;
         }
 
-        /* Botón Añadir (Solo en modo edición) */
         .add-btn-float { 
             position: fixed; bottom: 30px; right: 30px; background: var(--accent); 
             color: white; width: 60px; height: 60px; border-radius: 50%; 
             border: none; font-size: 2rem; cursor: pointer; display: none; 
-            align-items: center; justify-content: center; box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            align-items: center; justify-content: center; box-shadow: 0 5px 15px rgba(0,0,0,0.2); z-index: 999;
         }
 
-        /* Modales */
-        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(5px); }
+        /* MODALES CORREGIDOS CON SCROLL */
+        .modal { 
+            display: none; position: fixed; z-index: 1000; left: 0; top: 0; 
+            width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(5px);
+            overflow-y: auto; /* Permite scroll si el contenido es largo */
+        }
         .modal-content { 
-            background: white; margin: 5% auto; padding: 2rem; border-radius: 20px; 
-            width: 90%; max-width: 550px; position: relative;
+            background: white; margin: 2rem auto; padding: 2.5rem; border-radius: 20px; 
+            width: 90%; max-width: 600px; position: relative;
+            max-height: auto; /* Eliminado el límite rígido */
         }
-        .close { position: absolute; right: 20px; top: 15px; font-size: 28px; cursor: pointer; }
+        .close { position: absolute; right: 20px; top: 15px; font-size: 28px; cursor: pointer; color: #888; }
 
-        .form-group { margin-bottom: 1rem; }
-        .form-group label { display: block; font-weight: bold; margin-bottom: 5px; }
+        .form-group { margin-bottom: 1.2rem; }
+        .form-group label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 0.9rem; }
         .form-group input, .form-group textarea, .form-group select { 
-            width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 10px; font-family: inherit;
+            width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 10px; font-family: inherit;
         }
 
-        .save-btn { background: var(--primary); color: white; border: none; padding: 15px; border-radius: 10px; width: 100%; cursor: pointer; font-weight: bold; }
+        .save-btn { background: var(--primary); color: white; border: none; padding: 15px; border-radius: 10px; width: 100%; cursor: pointer; font-weight: bold; margin-top: 10px;}
+        
+        .edit-badge {
+            position: absolute; top: 15px; left: 55px; background: #5DADE2; color: white;
+            border: none; border-radius: 15px; padding: 5px 12px; font-size: 0.7rem; cursor: pointer;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -154,8 +160,9 @@
 
     <div id="formModal" class="modal"><div class="modal-content">
         <span class="close" onclick="closeForm()">&times;</span>
-        <h2 style="text-align: center; margin-bottom: 1rem;">✨ Nueva Receta ✨</h2>
+        <h2 id="formTitle" style="text-align: center; margin-bottom: 1.5rem; font-family: 'Playfair Display';">✨ Nueva Receta ✨</h2>
         <form id="recipeForm">
+            <input type="hidden" id="f_id">
             <div class="form-group"><label>Nombre</label><input type="text" id="f_title" required></div>
             <div class="form-group"><label>Categoría</label>
                 <select id="f_category">
@@ -171,8 +178,8 @@
                 <div style="flex:1"><label>Personas</label><input type="number" id="f_servings"></div>
             </div>
             <div class="form-group"><label>Ingredientes (por comas)</label><textarea id="f_ingredients" rows="3"></textarea></div>
-            <div class="form-group"><label>Pasos</label><textarea id="f_steps" rows="4"></textarea></div>
-            <button type="submit" class="save-btn">Publicar Receta 🚀</button>
+            <div class="form-group"><label>Pasos de preparación</label><textarea id="f_steps" rows="5"></textarea></div>
+            <button type="submit" class="save-btn" id="submitBtn">Publicar Receta 🚀</button>
         </form>
     </div></div>
 
@@ -206,10 +213,9 @@
         const grid = document.getElementById('recipeGrid');
         const searchInput = document.getElementById('searchInput');
 
-        // Contador de calorías realista (ajustado)
         function getCalories(ingredients) {
             const count = ingredients.split(',').length;
-            return Math.floor(count * 45 + 120); 
+            return Math.floor(count * 25 + 110); // Ajuste más bajo y realista
         }
 
         function listenRecipes() {
@@ -232,10 +238,13 @@
             filtered.forEach((r, index) => {
                 const card = document.createElement('div');
                 card.className = 'recipe-card';
-                card.style.animationDelay = `${index * 0.1}s`;
+                card.style.animationDelay = `${index * 0.05}s`;
                 card.innerHTML = `
                     <button class="fav-btn" onclick="toggleFav('${r.id}', ${r.favorite})">${r.favorite ? '❤️' : '🤍'}</button>
-                    ${isEditMode ? `<button onclick="deleteRecipe('${r.id}')" style="position:absolute; top:15px; left:15px; background:var(--accent); color:white; border:none; border-radius:50%; width:30px; height:30px; z-index:10; cursor:pointer;">✕</button>` : ''}
+                    ${isEditMode ? `
+                        <button onclick="deleteRecipe('${r.id}')" style="position:absolute; top:15px; left:15px; background:var(--accent); color:white; border:none; border-radius:50%; width:30px; height:30px; z-index:10; cursor:pointer;">✕</button>
+                        <button class="edit-badge" onclick="editRecipe('${r.id}')">✏️ Editar</button>
+                    ` : ''}
                     <img src="${r.image}" class="recipe-img" onclick="viewRecipe('${r.id}')">
                     <div class="recipe-content" onclick="viewRecipe('${r.id}')">
                         <div class="recipe-title">${r.title}</div>
@@ -266,8 +275,26 @@
             renderRecipes();
         });
 
+        // FUNCIÓN PARA EDITAR
+        window.editRecipe = (id) => {
+            const r = recipes.find(item => item.id === id);
+            document.getElementById('f_id').value = r.id;
+            document.getElementById('f_title').value = r.title;
+            document.getElementById('f_category').value = r.category;
+            document.getElementById('f_image').value = r.image;
+            document.getElementById('f_time').value = r.time;
+            document.getElementById('f_servings').value = r.servings;
+            document.getElementById('f_ingredients').value = r.ingredients;
+            document.getElementById('f_steps').value = r.steps;
+            
+            document.getElementById('formTitle').innerText = "✏️ Editar Receta";
+            document.getElementById('submitBtn').innerText = "Actualizar Cambios 💾";
+            openForm();
+        }
+
         document.getElementById('recipeForm').addEventListener('submit', async (e) => {
             e.preventDefault();
+            const id = document.getElementById('f_id').value;
             const data = {
                 title: document.getElementById('f_title').value,
                 category: document.getElementById('f_category').value,
@@ -276,12 +303,20 @@
                 servings: document.getElementById('f_servings').value,
                 ingredients: document.getElementById('f_ingredients').value,
                 steps: document.getElementById('f_steps').value,
-                favorite: false,
-                createdAt: new Date()
+                updatedAt: new Date()
             };
-            await db.collection("recetas").add(data);
+
+            if(id) {
+                await db.collection("recetas").doc(id).update(data);
+            } else {
+                data.favorite = false;
+                data.createdAt = new Date();
+                await db.collection("recetas").add(data);
+            }
+            
             closeForm();
             e.target.reset();
+            document.getElementById('f_id').value = "";
         });
 
         window.toggleFav = async (id, current) => {
@@ -289,27 +324,42 @@
         };
 
         window.deleteRecipe = async (id) => {
-            if(confirm('¿Eliminar receta?')) await db.collection("recetas").doc(id).delete();
+            if(confirm('¿Eliminar receta permanentemente?')) await db.collection("recetas").doc(id).delete();
         };
 
-        window.openForm = () => document.getElementById('formModal').style.display = 'block';
-        window.closeForm = () => document.getElementById('formModal').style.display = 'none';
-        window.closeDetail = () => document.getElementById('detailModal').style.display = 'none';
+        window.openForm = () => {
+            document.getElementById('formModal').style.display = 'block';
+            document.body.style.overflow = 'hidden'; // Evita scroll de fondo
+        };
+        window.closeForm = () => {
+            document.getElementById('formModal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+            document.getElementById('recipeForm').reset();
+            document.getElementById('f_id').value = "";
+            document.getElementById('formTitle').innerText = "✨ Nueva Receta ✨";
+            document.getElementById('submitBtn').innerText = "Publicar Receta 🚀";
+        };
+        window.closeDetail = () => {
+            document.getElementById('detailModal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        };
 
         window.viewRecipe = (id) => {
             const r = recipes.find(item => item.id === id);
             const content = document.getElementById('detailContent');
             content.innerHTML = `
-                <img src="${r.image}" style="width:100%; height:250px; object-fit:cover; border-radius:15px;">
-                <h2 style="font-family:'Playfair Display'; margin: 15px 0;">${r.title}</h2>
-                <div style="background:#f9f9f9; padding:15px; border-radius:15px;">
+                <img src="${r.image}" style="width:100%; height:300px; object-fit:cover; border-radius:15px;">
+                <h2 style="font-family:'Playfair Display'; margin: 20px 0; font-size: 2rem; color: var(--primary);">${r.title}</h2>
+                <div style="background:#fdfdfd; padding:20px; border-radius:15px; border: 1px solid #eee;">
+                    <p style="margin-bottom: 10px;"><strong>⏱️ Tiempo:</strong> ${r.time} | <strong>👤 Porciones:</strong> ${r.servings}</p>
                     <p><strong>🛒 Ingredientes:</strong></p>
-                    <p>${r.ingredients.replace(/,/g, ' • ')}</p>
-                    <p style="margin-top:10px;"><strong>👨‍🍳 Pasos:</strong></p>
-                    <p style="white-space: pre-line;">${r.steps}</p>
+                    <p style="color: #666; margin-bottom: 15px;">${r.ingredients.replace(/,/g, ' • ')}</p>
+                    <p><strong>👨‍🍳 Preparación:</strong></p>
+                    <p style="white-space: pre-line; color: #555;">${r.steps}</p>
                 </div>
             `;
             document.getElementById('detailModal').style.display = 'block';
+            document.body.style.overflow = 'hidden';
         };
 
         document.getElementById('categoryNav').addEventListener('click', (e) => {
@@ -322,6 +372,12 @@
         });
 
         searchInput.addEventListener('input', renderRecipes);
+        
+        // Cerrar modales al hacer clic fuera
+        window.onclick = (e) => { 
+            if(e.target.className === 'modal') { closeForm(); closeDetail(); } 
+        };
+
         listenRecipes();
     </script>
 </body>
