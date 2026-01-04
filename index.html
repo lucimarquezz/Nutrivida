@@ -5,63 +5,165 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NutriVida | Recetas Protegidas</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🥑</text></svg>">
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;700&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700&family=Playfair+Display:wght@600;800&display=swap" rel="stylesheet">
 
     <style>
         :root {
-            --primary: #8FBC8F; 
-            --secondary: #FDFBF7; 
-            --accent: #E07A5F; 
-            --text: #3D405B; 
-            --bg: #F4F1DE; 
+            /* Paleta: Serenidad y Salud */
+            --primary: #6B8E23;    /* Verde Olivo suave */
+            --primary-light: #8FBC8F; 
+            --secondary: #F9F7F2;  /* Crema sedoso */
+            --accent: #D97B51;     /* Terracota Vital */
+            --text: #2D3047;       /* Azul Grisáceo profundo */
+            --text-light: #707593;
+            --bg: #F4F1DE;         
             --card-bg: #FFFFFF;
-            --shadow: 0 4px 15px rgba(0,0,0,0.05);
+            --shadow: 0 10px 30px rgba(0,0,0,0.04);
+            --radius: 18px;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; transition: all 0.3s ease; }
-        body { font-family: 'Nunito', sans-serif; background-color: var(--bg); color: var(--text); line-height: 1.6; }
-
-        header { background-color: var(--card-bg); padding: 1rem 2rem; box-shadow: var(--shadow); position: sticky; top: 0; z-index: 100; }
-        .nav-container { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
-        .logo { font-family: 'Playfair Display', serif; font-size: 1.5rem; color: var(--primary); font-weight: bold; display: flex; align-items: center; gap: 10px; }
+        * { box-sizing: border-box; margin: 0; padding: 0; transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); }
         
-        .search-bar { flex-grow: 1; max-width: 400px; position: relative; }
-        .search-bar input { width: 100%; padding: 10px 15px; border-radius: 20px; border: 1px solid #ddd; background: var(--bg); outline: none; }
+        body { 
+            font-family: 'Nunito', sans-serif; 
+            background-color: var(--bg); 
+            color: var(--text); 
+            line-height: 1.7; 
+            background-image: radial-gradient(#d5d1b8 0.5px, transparent 0.5px);
+            background-size: 30px 30px; /* Sutil patrón de fondo */
+        }
 
-        .mode-toggle { display: flex; align-items: center; gap: 10px; font-size: 0.9rem; background: #eee; padding: 5px 15px; border-radius: 20px; }
-        .switch { position: relative; display: inline-block; width: 40px; height: 20px; }
+        /* Header Estilizado */
+        header { 
+            background-color: rgba(255, 255, 255, 0.95); 
+            padding: 1.2rem 2rem; 
+            box-shadow: 0 2px 20px rgba(0,0,0,0.03); 
+            position: sticky; 
+            top: 0; 
+            z-index: 100; 
+            backdrop-filter: blur(10px);
+        }
+        
+        .nav-container { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; gap: 2rem; }
+        
+        .logo { 
+            font-family: 'Playfair Display', serif; 
+            font-size: 1.8rem; 
+            color: var(--primary); 
+            font-weight: 800; 
+            letter-spacing: -0.5px;
+        }
+
+        .search-bar { flex-grow: 1; max-width: 500px; }
+        .search-bar input { 
+            width: 100%; 
+            padding: 12px 25px; 
+            border-radius: 30px; 
+            border: 1.5px solid #eee; 
+            background: var(--secondary); 
+            outline: none; 
+            font-size: 0.95rem;
+        }
+        .search-bar input:focus { border-color: var(--primary-light); background: #fff; box-shadow: 0 0 0 4px rgba(143, 188, 143, 0.1); }
+
+        /* Switch Elegante */
+        .mode-toggle { 
+            display: flex; align-items: center; gap: 12px; 
+            font-size: 0.85rem; font-weight: 700; color: var(--text-light);
+            background: #fff; padding: 8px 16px; border-radius: 50px; border: 1px solid #eee;
+        }
+        .switch { position: relative; width: 44px; height: 22px; }
         .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; border-radius: 34px; }
-        .slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 3px; background-color: white; border-radius: 50%; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #e0e0e0; border-radius: 34px; }
+        .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background-color: white; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
         input:checked + .slider { background-color: var(--primary); }
-        input:checked + .slider:before { transform: translateX(20px); }
+        input:checked + .slider:before { transform: translateX(22px); }
 
-        .categories { display: flex; justify-content: center; gap: 1rem; padding: 1.5rem; overflow-x: auto; }
-        .cat-btn { background: var(--card-bg); border: none; padding: 8px 20px; border-radius: 20px; cursor: pointer; font-weight: 600; color: var(--text); box-shadow: var(--shadow); white-space: nowrap; }
-        .cat-btn.active { background: var(--primary); color: white; }
-
-        .recipe-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 2rem; max-width: 1200px; margin: 0 auto; padding: 2rem; }
-        .recipe-card { background: var(--card-bg); border-radius: 15px; overflow: hidden; box-shadow: var(--shadow); position: relative; }
-        .recipe-img { width: 100%; height: 200px; object-fit: cover; cursor: pointer; }
-        .recipe-content { padding: 1.5rem; cursor: pointer; }
-        .recipe-title { font-family: 'Playfair Display', serif; font-size: 1.2rem; margin-bottom: 0.5rem; }
+        /* Categorías */
+        .categories { 
+            display: flex; justify-content: center; gap: 0.8rem; 
+            padding: 2rem 1rem; overflow-x: auto; scrollbar-width: none; 
+        }
+        .categories::-webkit-scrollbar { display: none; }
         
-        .fav-btn { position: absolute; top: 10px; right: 10px; background: rgba(255,255,255,0.9); border: none; border-radius: 50%; width: 35px; height: 35px; cursor: pointer; font-size: 1.2rem; z-index: 10; }
-        .delete-btn { position: absolute; top: 10px; left: 10px; background: #E07A5F; color: white; border: none; border-radius: 50%; width: 30px; height: 30px; cursor: pointer; z-index: 10; display: none; }
+        .cat-btn { 
+            background: #fff; border: 1px solid rgba(0,0,0,0.03); padding: 10px 24px; 
+            border-radius: 50px; cursor: pointer; font-weight: 600; color: var(--text-light); 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.02); font-size: 0.9rem;
+        }
+        .cat-btn:hover { transform: translateY(-3px); box-shadow: 0 6px 15px rgba(0,0,0,0.08); color: var(--primary); }
+        .cat-btn.active { background: var(--primary); color: white; box-shadow: 0 8px 20px rgba(107, 142, 35, 0.3); }
 
-        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); }
-        .modal-content { background: var(--card-bg); margin: 5% auto; padding: 2rem; border-radius: 15px; width: 90%; max-width: 600px; max-height: 85vh; overflow-y: auto; position: relative; }
-        .close { position: absolute; right: 20px; top: 15px; font-size: 28px; cursor: pointer; }
-
-        .form-group { margin-bottom: 1rem; }
-        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
-        .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-family: inherit; }
+        /* Grid y Cards */
+        .recipe-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 2.5rem; max-width: 1200px; margin: 0 auto; padding: 0 2rem 4rem; }
         
-        .add-btn-float { position: fixed; bottom: 30px; right: 30px; background: var(--accent); color: white; width: 60px; height: 60px; border-radius: 50%; border: none; font-size: 2rem; cursor: pointer; display: none; box-shadow: 0 5px 15px rgba(0,0,0,0.2); align-items: center; justify-content: center; }
-        .save-btn { background: var(--primary); color: white; border: none; padding: 12px; border-radius: 8px; width: 100%; font-size: 1rem; cursor: pointer; margin-top: 10px; }
+        .recipe-card { 
+            background: var(--card-bg); border-radius: var(--radius); overflow: hidden; 
+            box-shadow: var(--shadow); position: relative; border: 1px solid rgba(0,0,0,0.02);
+        }
+        .recipe-card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.08); }
+        
+        .recipe-img { width: 100%; height: 240px; object-fit: cover; cursor: pointer; filter: saturate(0.9); }
+        .recipe-card:hover .recipe-img { filter: saturate(1.1); scale: 1.05; }
+        
+        .recipe-content { padding: 1.8rem; cursor: pointer; }
+        .recipe-title { font-family: 'Playfair Display', serif; font-size: 1.35rem; margin-bottom: 0.6rem; color: var(--text); font-weight: 600; }
+        
+        .fav-btn { 
+            position: absolute; top: 15px; right: 15px; background: rgba(255,255,255,0.9); 
+            border: none; border-radius: 50%; width: 40px; height: 40px; 
+            cursor: pointer; font-size: 1.2rem; z-index: 10; display: flex; align-items: center; justify-content: center;
+            backdrop-filter: blur(4px);
+        }
+        .fav-btn:hover { transform: scale(1.1); background: #fff; }
 
-        .detail-img { width: 100%; height: 300px; object-fit: cover; border-radius: 10px; margin-bottom: 1.5rem; }
-        .detail-section h3 { color: var(--primary); margin: 1rem 0 0.5rem 0; border-bottom: 1px solid #eee; }
+        .delete-btn { 
+            position: absolute; top: 15px; left: 15px; background: var(--accent); 
+            color: white; border: none; border-radius: 50%; width: 35px; height: 35px; 
+            cursor: pointer; z-index: 10; font-weight: bold; box-shadow: 0 4px 10px rgba(224, 122, 95, 0.3);
+        }
+
+        /* Modales Estéticos */
+        .modal { background: rgba(61, 64, 91, 0.4); backdrop-filter: blur(8px); }
+        .modal-content { 
+            background: var(--card-bg); border-radius: 24px; padding: 3rem; 
+            width: 95%; max-width: 650px; border: none; box-shadow: 0 25px 50px rgba(0,0,0,0.2);
+        }
+        .close { top: 20px; right: 25px; color: var(--text-light); opacity: 0.5; }
+        .close:hover { opacity: 1; color: var(--accent); }
+
+        /* Formularios */
+        .form-group label { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-light); margin-bottom: 8px; }
+        .form-group input, .form-group textarea, .form-group select { 
+            background: var(--secondary); border: 1.5px solid transparent; padding: 14px; 
+            border-radius: 12px; font-size: 1rem; color: var(--text);
+        }
+        .form-group input:focus, .form-group textarea:focus { background: #fff; border-color: var(--primary-light); outline: none; }
+
+        /* Botones */
+        .add-btn-float { 
+            bottom: 40px; right: 40px; background: var(--accent); 
+            width: 65px; height: 65px; font-size: 2.2rem; 
+            box-shadow: 0 10px 25px rgba(217, 123, 81, 0.4);
+        }
+        .add-btn-float:hover { transform: rotate(90deg) scale(1.1); background: var(--text); }
+
+        .save-btn { 
+            background: var(--primary); font-weight: 700; letter-spacing: 0.5px; 
+            padding: 16px; border-radius: 14px; margin-top: 20px;
+            box-shadow: 0 6px 20px rgba(107, 142, 35, 0.2);
+        }
+        .save-btn:hover { background: #556B2F; transform: translateY(-2px); box-shadow: 0 10px 25px rgba(107, 142, 35, 0.3); }
+
+        /* Detalle de Receta */
+        .detail-img { height: 350px; border-radius: 20px; box-shadow: 0 15px 30px rgba(0,0,0,0.1); }
+        .detail-section h3 { 
+            font-family: 'Playfair Display', serif; font-size: 1.5rem; 
+            color: var(--text); padding-bottom: 8px; margin-top: 2rem;
+            border-bottom: 2px solid var(--bg);
+        }
+        .detail-section p { color: var(--text-light); font-size: 1.05rem; margin-top: 10px; }
+
     </style>
 </head>
 <body>
@@ -73,12 +175,12 @@
                 <input type="text" id="searchInput" placeholder="🔍 Buscar receta o ingrediente...">
             </div>
             <div class="mode-toggle">
-                <span>Vista</span>
+                <span>VISTA</span>
                 <label class="switch">
                     <input type="checkbox" id="modeSwitch">
                     <span class="slider"></span>
                 </label>
-                <span>Editar</span>
+                <span>EDITAR</span>
             </div>
         </div>
     </header>
@@ -98,20 +200,20 @@
 
     <div id="formModal" class="modal"><div class="modal-content">
         <span class="close" onclick="closeForm()">&times;</span>
-        <h2 style="text-align: center; margin-bottom: 1rem;">✨ Nueva Receta ✨</h2>
+        <h2 style="text-align: center; margin-bottom: 2rem; font-family: 'Playfair Display'; font-size: 2rem;">✨ Crear Nueva Receta</h2>
         <form id="recipeForm">
-            <div class="form-group"><label>Nombre</label><input type="text" id="f_title" required></div>
+            <div class="form-group"><label>Nombre de la creación</label><input type="text" id="f_title" required placeholder="Ej: Bowl de Acai"></div>
             <div class="form-group"><label>Categoría</label>
                 <select id="f_category"><option value="desayuno">Desayuno</option><option value="almuerzo">Almuerzo</option><option value="cena">Cena</option><option value="postres">Postre</option></select>
             </div>
-            <div class="form-group"><label>URL de Imagen</label><input type="url" id="f_image" required></div>
-            <div class="form-group" style="display:flex; gap:10px;">
-                <div style="flex:1"><label>Tiempo</label><input type="text" id="f_time" placeholder="Ej: 15 min"></div>
-                <div style="flex:1"><label>Personas</label><input type="number" id="f_servings"></div>
+            <div class="form-group"><label>URL de Imagen Saludable</label><input type="url" id="f_image" required placeholder="https://images.unsplash.com/..."></div>
+            <div class="form-group" style="display:flex; gap:20px;">
+                <div style="flex:1"><label>⏱️ Tiempo</label><input type="text" id="f_time" placeholder="Ej: 15 min"></div>
+                <div style="flex:1"><label>👤 Porciones</label><input type="number" id="f_servings"></div>
             </div>
-            <div class="form-group"><label>Ingredientes (por comas)</label><textarea id="f_ingredients" rows="3"></textarea></div>
-            <div class="form-group"><label>Pasos</label><textarea id="f_steps" rows="4"></textarea></div>
-            <button type="submit" class="save-btn">Publicar en la Nube 🚀</button>
+            <div class="form-group"><label>🛒 Ingredientes (separados por comas)</label><textarea id="f_ingredients" rows="3" placeholder="Avena, Leche, Miel..."></textarea></div>
+            <div class="form-group"><label>👨‍🍳 Preparación paso a paso</label><textarea id="f_steps" rows="4" placeholder="1. Mezclar los ingredientes..."></textarea></div>
+            <button type="submit" class="save-btn">Publicar Receta en la Nube 🚀</button>
         </form>
     </div></div>
 
@@ -124,7 +226,7 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 
     <script>
-        // CONFIGURACIÓN DE FIREBASE
+        // CONFIGURACIÓN DE FIREBASE (TU CÓDIGO ORIGINAL)
         const firebaseConfig = {
             apiKey: "AIzaSyBPJzHSkThHiVzhDO0JVBR9mzeDzsdMp3U",
             authDomain: "nutrivida-a76c6.firebaseapp.com",
@@ -141,7 +243,7 @@
         let recipes = [];
         let isEditMode = false;
         let currentCategory = 'all';
-        const ACCESS_CODE = "210923"; // TU CÓDIGO DE ACCESO
+        const ACCESS_CODE = "210923"; 
 
         const grid = document.getElementById('recipeGrid');
         const searchInput = document.getElementById('searchInput');
@@ -172,14 +274,13 @@
                     <img src="${r.image}" class="recipe-img" onclick="viewRecipe('${r.id}')">
                     <div class="recipe-content" onclick="viewRecipe('${r.id}')">
                         <div class="recipe-title">${r.title}</div>
-                        <div style="font-size:0.8rem; color:#888">⏱️ ${r.time || '--'} | 👤 ${r.servings || '--'}</div>
+                        <div style="font-size:0.85rem; color:var(--text-light); font-weight:600">⏱️ ${r.time || '--'} | 👤 ${r.servings || '--'} porc.</div>
                     </div>
                 `;
                 grid.appendChild(card);
             });
         }
 
-        // --- Lógica del Switch con Código ---
         document.getElementById('modeSwitch').addEventListener('change', function(e) {
             if (this.checked) {
                 const inputCode = prompt("🔐 Introduce el código de administrador para editar:");
@@ -236,7 +337,7 @@
             const content = document.getElementById('detailContent');
             content.innerHTML = `
                 <img src="${r.image}" class="detail-img">
-                <h2 style="font-family:'Playfair Display'">${r.title}</h2>
+                <h2 style="font-family:'Playfair Display'; font-size:2.2rem; margin-top:1rem">${r.title}</h2>
                 <div class="detail-section">
                     <h3>🛒 Ingredientes</h3>
                     <p>${r.ingredients.replace(/,/g, ' • ')}</p>
