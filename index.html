@@ -3,45 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NutriVida Pro | Cloud</title>
+    <title>NutriVida | Recetas Protegidas</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🥑</text></svg>">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;700&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
 
     <style>
-        :root { --primary: #8FBC8F; --secondary: #FDFBF7; --accent: #E07A5F; --text: #3D405B; --bg: #F4F1DE; --card-bg: #FFFFFF; --shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        :root {
+            --primary: #8FBC8F; 
+            --secondary: #FDFBF7; 
+            --accent: #E07A5F; 
+            --text: #3D405B; 
+            --bg: #F4F1DE; 
+            --card-bg: #FFFFFF;
+            --shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
         * { box-sizing: border-box; margin: 0; padding: 0; transition: all 0.3s ease; }
         body { font-family: 'Nunito', sans-serif; background-color: var(--bg); color: var(--text); line-height: 1.6; }
+
         header { background-color: var(--card-bg); padding: 1rem 2rem; box-shadow: var(--shadow); position: sticky; top: 0; z-index: 100; }
         .nav-container { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
-        .logo { font-family: 'Playfair Display', serif; font-size: 1.5rem; color: var(--primary); font-weight: bold; }
-        .search-bar { flex-grow: 1; max-width: 400px; }
-        .search-bar input { width: 100%; padding: 10px 15px; border-radius: 20px; border: 1px solid #ddd; outline: none; }
-        .mode-toggle { display: flex; align-items: center; gap: 10px; font-size: 0.8rem; background: #eee; padding: 5px 12px; border-radius: 20px; }
-        .switch { position: relative; width: 40px; height: 20px; }
+        .logo { font-family: 'Playfair Display', serif; font-size: 1.5rem; color: var(--primary); font-weight: bold; display: flex; align-items: center; gap: 10px; }
+        
+        .search-bar { flex-grow: 1; max-width: 400px; position: relative; }
+        .search-bar input { width: 100%; padding: 10px 15px; border-radius: 20px; border: 1px solid #ddd; background: var(--bg); outline: none; }
+
+        .mode-toggle { display: flex; align-items: center; gap: 10px; font-size: 0.9rem; background: #eee; padding: 5px 15px; border-radius: 20px; }
+        .switch { position: relative; display: inline-block; width: 40px; height: 20px; }
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; border-radius: 34px; }
         .slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 3px; background-color: white; border-radius: 50%; }
         input:checked + .slider { background-color: var(--primary); }
         input:checked + .slider:before { transform: translateX(20px); }
-        .categories { display: flex; justify-content: center; gap: 0.5rem; padding: 1rem; overflow-x: auto; }
-        .cat-btn { background: var(--card-bg); border: none; padding: 8px 15px; border-radius: 20px; cursor: pointer; font-weight: 600; white-space: nowrap; }
+
+        .categories { display: flex; justify-content: center; gap: 1rem; padding: 1.5rem; overflow-x: auto; }
+        .cat-btn { background: var(--card-bg); border: none; padding: 8px 20px; border-radius: 20px; cursor: pointer; font-weight: 600; color: var(--text); box-shadow: var(--shadow); white-space: nowrap; }
         .cat-btn.active { background: var(--primary); color: white; }
-        .recipe-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 2rem; max-width: 1200px; margin: 0 auto; padding: 1rem; }
+
+        .recipe-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 2rem; max-width: 1200px; margin: 0 auto; padding: 2rem; }
         .recipe-card { background: var(--card-bg); border-radius: 15px; overflow: hidden; box-shadow: var(--shadow); position: relative; }
         .recipe-img { width: 100%; height: 200px; object-fit: cover; cursor: pointer; }
-        .recipe-content { padding: 1rem; cursor: pointer; }
-        .calorie-badge { background: #f0f7f0; color: #2d5a2d; padding: 2px 8px; border-radius: 10px; font-size: 0.7rem; font-weight: bold; }
-        .fav-btn { position: absolute; top: 10px; right: 10px; background: white; border: none; border-radius: 50%; width: 35px; height: 35px; cursor: pointer; z-index: 5; }
-        .delete-btn { position: absolute; top: 10px; left: 10px; background: var(--accent); color: white; border: none; border-radius: 50%; width: 30px; height: 30px; cursor: pointer; z-index: 5; display: none; }
-        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); }
-        .modal-content { background: white; margin: 5% auto; padding: 2rem; border-radius: 15px; width: 90%; max-width: 500px; max-height: 85vh; overflow-y: auto; position: relative; }
-        .close { position: absolute; right: 20px; top: 15px; font-size: 24px; cursor: pointer; }
+        .recipe-content { padding: 1.5rem; cursor: pointer; }
+        .recipe-title { font-family: 'Playfair Display', serif; font-size: 1.2rem; margin-bottom: 0.5rem; }
+        
+        .fav-btn { position: absolute; top: 10px; right: 10px; background: rgba(255,255,255,0.9); border: none; border-radius: 50%; width: 35px; height: 35px; cursor: pointer; font-size: 1.2rem; z-index: 10; }
+        .delete-btn { position: absolute; top: 10px; left: 10px; background: #E07A5F; color: white; border: none; border-radius: 50%; width: 30px; height: 30px; cursor: pointer; z-index: 10; display: none; }
+
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); }
+        .modal-content { background: var(--card-bg); margin: 5% auto; padding: 2rem; border-radius: 15px; width: 90%; max-width: 600px; max-height: 85vh; overflow-y: auto; position: relative; }
+        .close { position: absolute; right: 20px; top: 15px; font-size: 28px; cursor: pointer; }
+
         .form-group { margin-bottom: 1rem; }
-        .form-group label { display: block; font-weight: bold; font-size: 0.9rem; }
-        .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 8px; }
-        .add-btn-float { position: fixed; bottom: 20px; right: 20px; background: var(--accent); color: white; width: 55px; height: 55px; border-radius: 50%; border: none; font-size: 1.5rem; cursor: pointer; display: none; box-shadow: 0 4px 10px rgba(0,0,0,0.2); z-index: 99; }
-        .save-btn { background: var(--primary); color: white; border: none; padding: 12px; border-radius: 8px; width: 100%; cursor: pointer; font-weight: bold; }
-        .detail-img { width: 100%; height: 250px; object-fit: cover; border-radius: 10px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+        .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-family: inherit; }
+        
+        .add-btn-float { position: fixed; bottom: 30px; right: 30px; background: var(--accent); color: white; width: 60px; height: 60px; border-radius: 50%; border: none; font-size: 2rem; cursor: pointer; display: none; box-shadow: 0 5px 15px rgba(0,0,0,0.2); align-items: center; justify-content: center; }
+        .save-btn { background: var(--primary); color: white; border: none; padding: 12px; border-radius: 8px; width: 100%; font-size: 1rem; cursor: pointer; margin-top: 10px; }
+
+        .detail-img { width: 100%; height: 300px; object-fit: cover; border-radius: 10px; margin-bottom: 1.5rem; }
+        .detail-section h3 { color: var(--primary); margin: 1rem 0 0.5rem 0; border-bottom: 1px solid #eee; }
     </style>
 </head>
 <body>
@@ -49,10 +69,15 @@
     <header>
         <div class="nav-container">
             <div class="logo">🌿 NutriVida</div>
-            <div class="search-bar"><input type="text" id="searchInput" placeholder="Buscar receta..."></div>
+            <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="🔍 Buscar receta o ingrediente...">
+            </div>
             <div class="mode-toggle">
                 <span>Vista</span>
-                <label class="switch"><input type="checkbox" id="modeSwitch"><span class="slider"></span></label>
+                <label class="switch">
+                    <input type="checkbox" id="modeSwitch">
+                    <span class="slider"></span>
+                </label>
                 <span>Editar</span>
             </div>
         </div>
@@ -68,19 +93,25 @@
     </nav>
 
     <main class="recipe-grid" id="recipeGrid"></main>
+
     <button class="add-btn-float" id="addBtn" onclick="openForm()">+</button>
 
     <div id="formModal" class="modal"><div class="modal-content">
         <span class="close" onclick="closeForm()">&times;</span>
-        <h2 style="text-align:center">Nueva Receta</h2><br>
+        <h2 style="text-align: center; margin-bottom: 1rem;">✨ Nueva Receta ✨</h2>
         <form id="recipeForm">
-            <div class="form-group"><label>Título</label><input type="text" id="f_title" required></div>
-            <div class="form-group"><label>Categoría</label><select id="f_category"><option value="desayuno">Desayuno</option><option value="almuerzo">Almuerzo</option><option value="cena">Cena</option><option value="postres">Postres</option></select></div>
-            <div class="form-group"><label>URL Imagen</label><input type="url" id="f_image" required></div>
-            <div class="form-group"><label>Ingredientes</label><textarea id="f_ingredients" rows="2" placeholder="Pollo, sal, pimienta..."></textarea></div>
-            <div class="form-group"><label>Pasos</label><textarea id="f_steps" rows="3"></textarea></div>
-            <div class="form-group"><label>Porciones</label><input type="number" id="f_servings" value="1"></div>
-            <button type="submit" class="save-btn" id="btnSubmit">Guardar en la Nube 🚀</button>
+            <div class="form-group"><label>Nombre</label><input type="text" id="f_title" required></div>
+            <div class="form-group"><label>Categoría</label>
+                <select id="f_category"><option value="desayuno">Desayuno</option><option value="almuerzo">Almuerzo</option><option value="cena">Cena</option><option value="postres">Postre</option></select>
+            </div>
+            <div class="form-group"><label>URL de Imagen</label><input type="url" id="f_image" required></div>
+            <div class="form-group" style="display:flex; gap:10px;">
+                <div style="flex:1"><label>Tiempo</label><input type="text" id="f_time" placeholder="Ej: 15 min"></div>
+                <div style="flex:1"><label>Personas</label><input type="number" id="f_servings"></div>
+            </div>
+            <div class="form-group"><label>Ingredientes (por comas)</label><textarea id="f_ingredients" rows="3"></textarea></div>
+            <div class="form-group"><label>Pasos</label><textarea id="f_steps" rows="4"></textarea></div>
+            <button type="submit" class="save-btn">Publicar en la Nube 🚀</button>
         </form>
     </div></div>
 
@@ -93,13 +124,15 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 
     <script>
+        // CONFIGURACIÓN DE FIREBASE
         const firebaseConfig = {
             apiKey: "AIzaSyBPJzHSkThHiVzhDO0JVBR9mzeDzsdMp3U",
             authDomain: "nutrivida-a76c6.firebaseapp.com",
             projectId: "nutrivida-a76c6",
             storageBucket: "nutrivida-a76c6.firebasestorage.app",
             messagingSenderId: "567761304572",
-            appId: "1:567761304572:web:a6552ed4e5f7d0c0465079"
+            appId: "1:567761304572:web:a6552ed4e5f7d0c0465079",
+            measurementId: "G-7DGLSVGFVV"
         };
 
         firebase.initializeApp(firebaseConfig);
@@ -108,126 +141,125 @@
         let recipes = [];
         let isEditMode = false;
         let currentCategory = 'all';
-        const ACCESS_CODE = "210923";
+        const ACCESS_CODE = "210923"; // TU CÓDIGO DE ACCESO
 
-        // IA de Calorías
-        const calorieMap = { "pollo": 165, "carne": 250, "pescado": 150, "arroz": 130, "huevo": 150, "aguacate": 160, "pan": 250, "avena": 300, "fruta": 60 };
-
-        function estimateCalories(ings, servs) {
-            let total = 0;
-            const words = ings.toLowerCase().split(',');
-            words.forEach(w => { for(let key in calorieMap) { if(w.includes(key)) total += calorieMap[key]; } });
-            return Math.round((total || 350) / (servs || 1) + 100);
-        }
-
-        // Recuperar datos locales y subirlos a la nube (Rescate)
-        async function syncLocalToCloud() {
-            const local = localStorage.getItem('nutrivida_recipes');
-            if(local) {
-                const old = JSON.parse(local);
-                for(let r of old) { await db.collection("recetas").add({...r, createdAt: new Date()}); }
-                localStorage.removeItem('nutrivida_recipes');
-            }
-        }
+        const grid = document.getElementById('recipeGrid');
+        const searchInput = document.getElementById('searchInput');
 
         function listenRecipes() {
-            db.collection("recetas").orderBy("createdAt", "desc").onSnapshot(snap => {
-                recipes = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                render();
-            }, err => {
-                console.error(err);
-                alert("⚠️ Error de permisos en Firebase. Revisa las REGLAS en tu consola.");
+            db.collection("recetas").orderBy("createdAt", "desc").onSnapshot((snapshot) => {
+                recipes = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                renderRecipes();
             });
         }
 
-        function render() {
-            const grid = document.getElementById('recipeGrid');
-            const search = document.getElementById('searchInput').value.toLowerCase();
+        function renderRecipes() {
+            const term = searchInput.value.toLowerCase();
             grid.innerHTML = '';
+            
+            const filtered = recipes.filter(r => {
+                const matchCat = currentCategory === 'all' || (currentCategory === 'favoritos' ? r.favorite : r.category === currentCategory);
+                const matchSearch = r.title.toLowerCase().includes(term) || r.ingredients.toLowerCase().includes(term);
+                return matchCat && matchSearch;
+            });
 
-            recipes.filter(r => {
-                const catMatch = currentCategory === 'all' || (currentCategory === 'favoritos' ? r.favorite : r.category === currentCategory);
-                const searchMatch = r.title.toLowerCase().includes(search);
-                return catMatch && searchMatch;
-            }).forEach(r => {
-                const div = document.createElement('div');
-                div.className = 'recipe-card';
-                div.innerHTML = `
-                    <button class="delete-btn" style="display:${isEditMode?'block':'none'}" onclick="deleteRec('${r.id}')">✕</button>
-                    <button class="fav-btn" onclick="toggleFav('${r.id}', ${r.favorite})">${r.favorite?'❤️':'🤍'}</button>
-                    <img src="${r.image}" class="recipe-img" onclick="showDet('${r.id}')">
-                    <div class="recipe-content" onclick="showDet('${r.id}')">
-                        <div style="font-weight:bold">${r.title}</div>
-                        <div class="calorie-badge">🔥 ${r.calories || '---'} kcal</div>
-                    </div>`;
-                grid.appendChild(div);
+            filtered.forEach(r => {
+                const card = document.createElement('div');
+                card.className = 'recipe-card';
+                card.innerHTML = `
+                    <button class="delete-btn" onclick="deleteRecipe('${r.id}')" style="display: ${isEditMode ? 'block' : 'none'}">✕</button>
+                    <button class="fav-btn" onclick="toggleFav('${r.id}', ${r.favorite})">${r.favorite ? '❤️' : '🤍'}</button>
+                    <img src="${r.image}" class="recipe-img" onclick="viewRecipe('${r.id}')">
+                    <div class="recipe-content" onclick="viewRecipe('${r.id}')">
+                        <div class="recipe-title">${r.title}</div>
+                        <div style="font-size:0.8rem; color:#888">⏱️ ${r.time || '--'} | 👤 ${r.servings || '--'}</div>
+                    </div>
+                `;
+                grid.appendChild(card);
             });
         }
 
-        document.getElementById('recipeForm').onsubmit = async (e) => {
-            e.preventDefault();
-            const btn = document.getElementById('btnSubmit');
-            btn.disabled = true; btn.innerText = "Subiendo...";
-            
-            const ings = document.getElementById('f_ingredients').value;
-            const servs = document.getElementById('f_servings').value;
+        // --- Lógica del Switch con Código ---
+        document.getElementById('modeSwitch').addEventListener('change', function(e) {
+            if (this.checked) {
+                const inputCode = prompt("🔐 Introduce el código de administrador para editar:");
+                if (inputCode === ACCESS_CODE) {
+                    isEditMode = true;
+                    document.getElementById('addBtn').style.display = 'flex';
+                } else {
+                    alert("⚠️ Código incorrecto. Acceso denegado.");
+                    this.checked = false;
+                    isEditMode = false;
+                    document.getElementById('addBtn').style.display = 'none';
+                }
+            } else {
+                isEditMode = false;
+                document.getElementById('addBtn').style.display = 'none';
+            }
+            renderRecipes();
+        });
 
+        document.getElementById('recipeForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
             const data = {
                 title: document.getElementById('f_title').value,
                 category: document.getElementById('f_category').value,
                 image: document.getElementById('f_image').value,
-                ingredients: ings,
+                time: document.getElementById('f_time').value,
+                servings: document.getElementById('f_servings').value,
+                ingredients: document.getElementById('f_ingredients').value,
                 steps: document.getElementById('f_steps').value,
-                servings: servs,
-                calories: estimateCalories(ings, servs),
                 favorite: false,
                 createdAt: new Date()
             };
+            await db.collection("recetas").add(data);
+            closeForm();
+            e.target.reset();
+        });
 
-            try {
-                await db.collection("recetas").add(data);
-                closeForm(); e.target.reset();
-            } catch(e) { alert("Error al guardar. Revisa las reglas de Firestore."); }
-            btn.disabled = false; btn.innerText = "Guardar en la Nube 🚀";
+        window.toggleFav = async (id, current) => {
+            await db.collection("recetas").doc(id).update({ favorite: !current });
         };
 
-        window.deleteRec = async (id) => { if(confirm("¿Borrar?")) await db.collection("recetas").doc(id).delete(); };
-        window.toggleFav = async (id, fav) => { await db.collection("recetas").doc(id).update({favorite: !fav}); };
-        
-        document.getElementById('modeSwitch').onchange = function() {
-            if(this.checked) {
-                if(prompt("Código:") === ACCESS_CODE) { isEditMode = true; document.getElementById('addBtn').style.display='flex'; }
-                else { this.checked = false; alert("Error"); }
-            } else { isEditMode = false; document.getElementById('addBtn').style.display='none'; }
-            render();
+        window.deleteRecipe = async (id) => {
+            if(confirm('¿Eliminar de la nube permanentemente?')) {
+                await db.collection("recetas").doc(id).delete();
+            }
         };
 
-        window.showDet = (id) => {
-            const r = recipes.find(x => x.id === id);
-            document.getElementById('detailContent').innerHTML = `
+        window.openForm = () => document.getElementById('formModal').style.display = 'block';
+        window.closeForm = () => document.getElementById('formModal').style.display = 'none';
+        window.closeDetail = () => document.getElementById('detailModal').style.display = 'none';
+
+        window.viewRecipe = (id) => {
+            const r = recipes.find(item => item.id === id);
+            const content = document.getElementById('detailContent');
+            content.innerHTML = `
                 <img src="${r.image}" class="detail-img">
-                <h2>${r.title}</h2>
-                <p><b>Ingredientes:</b> ${r.ingredients}</p><br>
-                <p><b>Pasos:</b> ${r.steps}</p><br>
-                <div class="calorie-badge" style="font-size:1rem">🔥 Calorías IA: ${r.calories} kcal</div>`;
-            document.getElementById('detailModal').style.display='block';
+                <h2 style="font-family:'Playfair Display'">${r.title}</h2>
+                <div class="detail-section">
+                    <h3>🛒 Ingredientes</h3>
+                    <p>${r.ingredients.replace(/,/g, ' • ')}</p>
+                    <h3>👨‍🍳 Paso a Paso</h3>
+                    <p style="white-space: pre-line;">${r.steps}</p>
+                </div>
+            `;
+            document.getElementById('detailModal').style.display = 'block';
         };
 
-        document.getElementById('categoryNav').onclick = (e) => {
+        document.getElementById('categoryNav').addEventListener('click', (e) => {
             if(e.target.classList.contains('cat-btn')) {
                 document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
                 e.target.classList.add('active');
                 currentCategory = e.target.dataset.cat;
-                render();
+                renderRecipes();
             }
-        };
+        });
 
-        window.openForm = () => document.getElementById('formModal').style.display='block';
-        window.closeForm = () => document.getElementById('formModal').style.display='none';
-        window.closeDetail = () => document.getElementById('detailModal').style.display='none';
-        document.getElementById('searchInput').oninput = render;
+        searchInput.addEventListener('input', renderRecipes);
+        window.onclick = (e) => { if(e.target.className === 'modal') { closeForm(); closeDetail(); } };
 
-        syncLocalToCloud().then(listenRecipes);
+        listenRecipes();
     </script>
 </body>
 </html>
