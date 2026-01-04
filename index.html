@@ -3,148 +3,149 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NutriVida | Recetas Saludables</title>
+    <title>NutriVida | Recetas Saludables 🥑</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🥑</text></svg>">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
 
     <style>
         :root {
-            --soft-green: #7FB685;
-            --sage: #A9C5A0;
-            --cream: #FAF9F6;
-            --dark: #2C3333;
-            --accent: #E9967A;
-            --white: #FFFFFF;
+            --primary: #8FBC8F;
+            --accent: #E07A5F;
+            --bg: #FDFBF7;
+            --card-bg: #FFFFFF;
+            --text: #3D405B;
         }
 
-        /* Reset & Base */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         * { box-sizing: border-box; margin: 0; padding: 0; transition: all 0.3s ease; }
+        
         body { 
-            font-family: 'Inter', sans-serif; 
-            background-color: var(--cream); 
-            color: var(--dark); 
-            line-height: 1.5;
+            font-family: 'Nunito', sans-serif; 
+            background-color: var(--bg); 
+            color: var(--text); 
+            line-height: 1.6;
         }
 
-        /* Header Limpio */
         header { 
-            background: var(--white); 
-            padding: 1.5rem; 
-            border-bottom: 1px solid rgba(0,0,0,0.05);
+            background: var(--card-bg); 
+            padding: 1rem 2rem; 
+            box-shadow: 0 2px 15px rgba(0,0,0,0.05);
             position: sticky; top: 0; z-index: 100;
         }
+
         .nav-container { 
-            max-width: 1100px; margin: 0 auto; 
+            max-width: 1200px; margin: 0 auto; 
             display: flex; justify-content: space-between; align-items: center; 
         }
-        .logo { 
-            font-family: 'Playfair Display', serif; font-size: 1.6rem; 
-            color: var(--soft-green); font-weight: 700; 
-        }
 
-        .search-bar { flex-grow: 1; max-width: 450px; margin: 0 2rem; }
+        .logo { font-family: 'Playfair Display', serif; font-size: 1.6rem; color: var(--primary); font-weight: bold; }
+
         .search-bar input { 
-            width: 100%; padding: 12px 20px; border-radius: 12px; 
-            border: 1px solid #E0E0E0; background: #F5F5F5; outline: none;
+            padding: 10px 20px; border-radius: 25px; border: 1px solid #eee; 
+            background: #f8f8f8; outline: none; width: 300px;
         }
 
-        /* Botón de Modo Edición */
-        .mode-toggle { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; font-weight: 600; }
-        .switch { position: relative; width: 34px; height: 18px; }
+        .mode-toggle { display: flex; align-items: center; gap: 10px; font-size: 0.9rem; font-weight: bold; }
+        
+        /* Switch */
+        .switch { position: relative; width: 40px; height: 20px; }
         .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #D1D1D1; border-radius: 20px; }
-        .slider:before { position: absolute; content: ""; height: 12px; width: 12px; left: 3px; bottom: 3px; background: white; border-radius: 50%; }
-        input:checked + .slider { background: var(--soft-green); }
-        input:checked + .slider:before { transform: translateX(16px); }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #ccc; border-radius: 34px; }
+        .slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 3px; background: white; border-radius: 50%; }
+        input:checked + .slider { background: var(--primary); }
+        input:checked + .slider:before { transform: translateX(20px); }
 
-        /* Categorías Estéticas */
-        .categories { 
-            display: flex; justify-content: center; gap: 10px; 
-            padding: 2rem 1rem; overflow-x: auto; 
-        }
+        /* Categorías */
+        .categories { display: flex; justify-content: center; gap: 15px; padding: 2rem; overflow-x: auto; }
         .cat-btn { 
-            background: transparent; border: 1px solid #DDD; padding: 8px 18px; 
-            border-radius: 8px; cursor: pointer; font-size: 0.85rem; color: #666;
+            background: white; border: none; padding: 10px 20px; border-radius: 20px; 
+            cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.05); font-weight: 600;
         }
-        .cat-btn.active { background: var(--soft-green); color: white; border-color: var(--soft-green); }
+        .cat-btn.active { background: var(--primary); color: white; }
+        .cat-btn:hover { transform: scale(1.05); }
 
-        /* Grid Ordenado */
+        /* Grid Animado */
         .recipe-grid { 
             display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); 
-            gap: 25px; max-width: 1100px; margin: 0 auto; padding: 0 1rem 4rem; 
+            gap: 2rem; max-width: 1200px; margin: 0 auto; padding: 1rem; 
         }
+
         .recipe-card { 
-            background: var(--white); border-radius: 12px; overflow: hidden; 
-            border: 1px solid rgba(0,0,0,0.04); position: relative;
-        }
-        .recipe-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
-        .recipe-img { width: 100%; height: 200px; object-fit: cover; cursor: pointer; }
-        
-        .recipe-content { padding: 1.2rem; cursor: pointer; }
-        .recipe-title { font-family: 'Playfair Display', serif; font-size: 1.15rem; margin-bottom: 5px; }
-        .recipe-meta { font-size: 0.75rem; color: #888; display: flex; gap: 10px; }
-        
-        /* Badge de Calorías Automático */
-        .calorie-badge {
-            background: rgba(127, 182, 133, 0.1); color: var(--soft-green);
-            padding: 2px 8px; border-radius: 4px; font-weight: 600;
+            background: var(--card-bg); border-radius: 20px; overflow: hidden; 
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05); position: relative;
+            animation: fadeInUp 0.6s ease backwards;
         }
 
-        .fav-btn { position: absolute; top: 12px; right: 12px; background: white; border: none; border-radius: 50%; width: 32px; height: 32px; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .recipe-img { width: 100%; height: 220px; object-fit: cover; cursor: pointer; }
+        .recipe-content { padding: 1.5rem; cursor: pointer; }
+        .recipe-title { font-family: 'Playfair Display', serif; font-size: 1.3rem; margin-bottom: 8px; }
 
-        /* Botón Añadir (Oculto por defecto) */
+        /* Badge Calorías */
+        .cal-badge { 
+            background: #f1f8e9; color: #558b2f; padding: 4px 10px; 
+            border-radius: 10px; font-size: 0.8rem; font-weight: bold; 
+        }
+
+        .fav-btn { 
+            position: absolute; top: 15px; right: 15px; background: rgba(255,255,255,0.9); 
+            border: none; border-radius: 50%; width: 35px; height: 35px; cursor: pointer; font-size: 1.2rem;
+        }
+
+        /* Botón Añadir (Solo en modo edición) */
         .add-btn-float { 
-            position: fixed; bottom: 30px; right: 30px; background: var(--dark); 
-            color: white; width: 55px; height: 55px; border-radius: 50%; 
-            border: none; font-size: 1.5rem; cursor: pointer; display: none; 
-            align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            position: fixed; bottom: 30px; right: 30px; background: var(--accent); 
+            color: white; width: 60px; height: 60px; border-radius: 50%; 
+            border: none; font-size: 2rem; cursor: pointer; display: none; 
+            align-items: center; justify-content: center; box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
 
-        /* Modal Minimalista */
-        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); backdrop-filter: blur(4px); }
+        /* Modales */
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(5px); }
         .modal-content { 
-            background: white; margin: 4% auto; padding: 2.5rem; border-radius: 16px; 
-            width: 90%; max-width: 550px; max-height: 85vh; overflow-y: auto; position: relative;
+            background: white; margin: 5% auto; padding: 2rem; border-radius: 20px; 
+            width: 90%; max-width: 550px; position: relative;
         }
-        .close { position: absolute; right: 20px; top: 20px; font-size: 24px; cursor: pointer; color: #999; }
+        .close { position: absolute; right: 20px; top: 15px; font-size: 28px; cursor: pointer; }
 
-        .form-group { margin-bottom: 1.2rem; }
-        .form-group label { display: block; margin-bottom: 6px; font-size: 0.8rem; font-weight: 600; color: #555; }
+        .form-group { margin-bottom: 1rem; }
+        .form-group label { display: block; font-weight: bold; margin-bottom: 5px; }
         .form-group input, .form-group textarea, .form-group select { 
-            width: 100%; padding: 11px; border: 1px solid #EEE; border-radius: 8px; font-family: inherit; background: #FAFAFA;
+            width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 10px; font-family: inherit;
         }
 
-        .save-btn { background: var(--soft-green); color: white; border: none; padding: 14px; border-radius: 8px; width: 100%; font-weight: 600; cursor: pointer; margin-top: 10px; }
-
-        .detail-img { width: 100%; height: 280px; object-fit: cover; border-radius: 12px; margin-bottom: 1.5rem; }
-        .detail-section h3 { font-size: 1rem; color: var(--soft-green); margin: 1.5rem 0 0.5rem; text-transform: uppercase; letter-spacing: 1px; }
+        .save-btn { background: var(--primary); color: white; border: none; padding: 15px; border-radius: 10px; width: 100%; cursor: pointer; font-weight: bold; }
     </style>
 </head>
 <body>
 
     <header>
         <div class="nav-container">
-            <div class="logo">NutriVida</div>
+            <div class="logo">🌿 NutriVida</div>
             <div class="search-bar">
-                <input type="text" id="searchInput" placeholder="Buscar receta o ingrediente...">
+                <input type="text" id="searchInput" placeholder="🔍 Buscar receta...">
             </div>
             <div class="mode-toggle">
-                <span>EDITAR</span>
+                <span>VISTA</span>
                 <label class="switch">
                     <input type="checkbox" id="modeSwitch">
                     <span class="slider"></span>
                 </label>
+                <span>EDITAR</span>
             </div>
         </div>
     </header>
 
     <nav class="categories" id="categoryNav">
         <button class="cat-btn active" data-cat="all">🏠 Todas</button>
-        <button class="cat-btn" data-cat="desayuno">Desayuno</button>
-        <button class="cat-btn" data-cat="almuerzo">Almuerzo</button>
-        <button class="cat-btn" data-cat="cena">Cena</button>
-        <button class="cat-btn" data-cat="postres">Postres</button>
-        <button class="cat-btn" data-cat="favoritos">Favoritos</button>
+        <button class="cat-btn" data-cat="desayuno">☕ Desayuno</button>
+        <button class="cat-btn" data-cat="almuerzo">🥗 Almuerzo</button>
+        <button class="cat-btn" data-cat="cena">🍲 Cena</button>
+        <button class="cat-btn" data-cat="postres">🍰 Postres</button>
+        <button class="cat-btn" data-cat="favoritos">❤️ Favoritos</button>
     </nav>
 
     <main class="recipe-grid" id="recipeGrid"></main>
@@ -153,20 +154,25 @@
 
     <div id="formModal" class="modal"><div class="modal-content">
         <span class="close" onclick="closeForm()">&times;</span>
-        <h2 style="font-family: 'Playfair Display'; margin-bottom: 1.5rem;">Nueva Receta</h2>
+        <h2 style="text-align: center; margin-bottom: 1rem;">✨ Nueva Receta ✨</h2>
         <form id="recipeForm">
             <div class="form-group"><label>Nombre</label><input type="text" id="f_title" required></div>
             <div class="form-group"><label>Categoría</label>
-                <select id="f_category"><option value="desayuno">Desayuno</option><option value="almuerzo">Almuerzo</option><option value="cena">Cena</option><option value="postres">Postre</option></select>
+                <select id="f_category">
+                    <option value="desayuno">Desayuno</option>
+                    <option value="almuerzo">Almuerzo</option>
+                    <option value="cena">Cena</option>
+                    <option value="postres">Postre</option>
+                </select>
             </div>
             <div class="form-group"><label>URL Imagen</label><input type="url" id="f_image" required></div>
             <div class="form-group" style="display:flex; gap:10px;">
-                <div style="flex:1"><label>Tiempo</label><input type="text" id="f_time" placeholder="15 min"></div>
+                <div style="flex:1"><label>Tiempo</label><input type="text" id="f_time" placeholder="Ej: 20 min"></div>
                 <div style="flex:1"><label>Personas</label><input type="number" id="f_servings"></div>
             </div>
             <div class="form-group"><label>Ingredientes (por comas)</label><textarea id="f_ingredients" rows="3"></textarea></div>
             <div class="form-group"><label>Pasos</label><textarea id="f_steps" rows="4"></textarea></div>
-            <button type="submit" class="save-btn">Guardar Receta</button>
+            <button type="submit" class="save-btn">Publicar Receta 🚀</button>
         </form>
     </div></div>
 
@@ -179,7 +185,6 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 
     <script>
-        // CONFIGURACIÓN DE FIREBASE (TU CONFIG ORIGINAL)
         const firebaseConfig = {
             apiKey: "AIzaSyBPJzHSkThHiVzhDO0JVBR9mzeDzsdMp3U",
             authDomain: "nutrivida-a76c6.firebaseapp.com",
@@ -201,10 +206,10 @@
         const grid = document.getElementById('recipeGrid');
         const searchInput = document.getElementById('searchInput');
 
-        // Lógica automática de calorías basada en ingredientes
-        function calculateCalories(ingredients) {
-            const list = ingredients.split(',').length;
-            return Math.floor(list * 85 + (Math.random() * 50)); 
+        // Contador de calorías realista (ajustado)
+        function getCalories(ingredients) {
+            const count = ingredients.split(',').length;
+            return Math.floor(count * 45 + 120); 
         }
 
         function listenRecipes() {
@@ -224,19 +229,19 @@
                 return matchCat && matchSearch;
             });
 
-            filtered.forEach(r => {
-                const cals = calculateCalories(r.ingredients);
+            filtered.forEach((r, index) => {
                 const card = document.createElement('div');
                 card.className = 'recipe-card';
+                card.style.animationDelay = `${index * 0.1}s`;
                 card.innerHTML = `
-                    <button class="delete-btn" onclick="deleteRecipe('${r.id}')" style="display: ${isEditMode ? 'block' : 'none'}; position:absolute; top:12px; left:12px; background:var(--accent); color:white; border:none; border-radius:50%; width:28px; height:28px; z-index:10; cursor:pointer;">✕</button>
                     <button class="fav-btn" onclick="toggleFav('${r.id}', ${r.favorite})">${r.favorite ? '❤️' : '🤍'}</button>
+                    ${isEditMode ? `<button onclick="deleteRecipe('${r.id}')" style="position:absolute; top:15px; left:15px; background:var(--accent); color:white; border:none; border-radius:50%; width:30px; height:30px; z-index:10; cursor:pointer;">✕</button>` : ''}
                     <img src="${r.image}" class="recipe-img" onclick="viewRecipe('${r.id}')">
                     <div class="recipe-content" onclick="viewRecipe('${r.id}')">
                         <div class="recipe-title">${r.title}</div>
-                        <div class="recipe-meta">
-                            <span>⏱️ ${r.time || '--'}</span>
-                            <span class="calorie-badge">🔥 ~${cals} kcal</span>
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <span style="font-size:0.8rem; color:#888">⏱️ ${r.time || '--'}</span>
+                            <span class="cal-badge">🔥 ${getCalories(r.ingredients)} kcal</span>
                         </div>
                     </div>
                 `;
@@ -244,17 +249,15 @@
             });
         }
 
-        // Lógica del Switch corregida: Botón añadir solo si es administrador
         document.getElementById('modeSwitch').addEventListener('change', function(e) {
             if (this.checked) {
-                const inputCode = prompt("🔐 Código de administrador:");
-                if (inputCode === ACCESS_CODE) {
+                const code = prompt("🔐 Código Admin:");
+                if (code === ACCESS_CODE) {
                     isEditMode = true;
                     document.getElementById('addBtn').style.display = 'flex';
                 } else {
-                    alert("⚠️ Incorrecto");
+                    alert("❌ Código incorrecto");
                     this.checked = false;
-                    isEditMode = false;
                 }
             } else {
                 isEditMode = false;
@@ -286,9 +289,7 @@
         };
 
         window.deleteRecipe = async (id) => {
-            if(confirm('¿Eliminar receta?')) {
-                await db.collection("recetas").doc(id).delete();
-            }
+            if(confirm('¿Eliminar receta?')) await db.collection("recetas").doc(id).delete();
         };
 
         window.openForm = () => document.getElementById('formModal').style.display = 'block';
@@ -299,12 +300,12 @@
             const r = recipes.find(item => item.id === id);
             const content = document.getElementById('detailContent');
             content.innerHTML = `
-                <img src="${r.image}" class="detail-img">
-                <h2 style="font-family:'Playfair Display'; font-size:1.8rem;">${r.title}</h2>
-                <div class="detail-section">
-                    <h3>🛒 Ingredientes</h3>
+                <img src="${r.image}" style="width:100%; height:250px; object-fit:cover; border-radius:15px;">
+                <h2 style="font-family:'Playfair Display'; margin: 15px 0;">${r.title}</h2>
+                <div style="background:#f9f9f9; padding:15px; border-radius:15px;">
+                    <p><strong>🛒 Ingredientes:</strong></p>
                     <p>${r.ingredients.replace(/,/g, ' • ')}</p>
-                    <h3>👨‍🍳 Pasos</h3>
+                    <p style="margin-top:10px;"><strong>👨‍🍳 Pasos:</strong></p>
                     <p style="white-space: pre-line;">${r.steps}</p>
                 </div>
             `;
@@ -321,8 +322,6 @@
         });
 
         searchInput.addEventListener('input', renderRecipes);
-        window.onclick = (e) => { if(e.target.className === 'modal') { closeForm(); closeDetail(); } };
-
         listenRecipes();
     </script>
 </body>
